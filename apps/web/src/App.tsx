@@ -38,7 +38,7 @@ function App() {
           <span>Flash Sale Engine</span>
         </div>
         <div className="nav-meta">
-          <span className="tag">Phase 1</span>
+          <span className="tag">Phase 4 · SST + Actions</span>
         </div>
       </header>
 
