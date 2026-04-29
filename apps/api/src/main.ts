@@ -6,9 +6,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
-  app.enableCors({
-    origin: ['http://localhost:5173'],
-  });
+  const corsOrigins = (config.get<string>('CORS_ORIGINS') ?? 'http://localhost:5173')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  app.enableCors({ origin: corsOrigins });
 
   const rawPort = config.get<string>('PORT');
   const parsed = rawPort ? Number.parseInt(rawPort, 10) : 3000;
