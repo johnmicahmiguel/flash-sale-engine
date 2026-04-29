@@ -22,6 +22,12 @@ RUN pnpm --filter @flash-sale/api build
 # Produce a self-contained prod-only deployment of the api package
 RUN pnpm --filter @flash-sale/api deploy --prod --legacy /out
 
+# `pnpm deploy` omits generated `.prisma/`; without it Node throws MODULE_NOT_FOUND `.prisma/client/default`.
+RUN set -eux; \
+  src="$(echo /repo/node_modules/.pnpm/@prisma+client@*/node_modules/.prisma)"; \
+  dst="$(echo /out/node_modules/.pnpm/@prisma+client@*/node_modules)"; \
+  cp -a "$src" "$dst/"
+
 # ---------- Runtime stage ----------
 FROM node:24-alpine AS runtime
 WORKDIR /app
