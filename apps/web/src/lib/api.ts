@@ -1,6 +1,6 @@
 import type {
   HealthResponse,
-  HelloResponse,
+  RootDbStatusResponse,
 } from "@flash-sale/shared-types";
 
 const API_URL =
@@ -60,5 +60,5 @@ async function getJson<T>(path: string): Promise<ApiResult<T>> {
   }
 }
 
-export const fetchHello = () => getJson<HelloResponse>("/");
+export const fetchHello = () => getJson<RootDbStatusResponse>("/");
 export const fetchHealth = () => getJson<HealthResponse>("/health");

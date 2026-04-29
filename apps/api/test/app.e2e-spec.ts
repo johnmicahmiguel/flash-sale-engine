@@ -20,7 +20,12 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect({ message: 'Hello World!' });
+      .expect((res) => {
+        expect(res.body).toMatchObject({
+          connected: expect.any(Boolean),
+          userCount: expect.any(Number),
+        });
+      });
   });
 
   afterEach(async () => {

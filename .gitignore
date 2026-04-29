@@ -8,4 +8,5 @@ build/
 .sst/
 coverage/
 *.log
+apps/api/scripts/
 docs/*

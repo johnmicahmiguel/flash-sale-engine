@@ -17,8 +17,10 @@ export type PurchaseResult =
   | { status: "sold_out" }
   | { status: "sale_not_active" };
 
-export interface HelloResponse {
-  message: string;
+export interface RootDbStatusResponse {
+  connected: boolean;
+  userCount: number;
+  error?: string;
 }
 
 export interface HealthResponse {

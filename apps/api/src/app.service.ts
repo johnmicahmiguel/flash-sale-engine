@@ -1,9 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import type { HelloResponse } from '@flash-sale/shared-types';
+import type { RootDbStatusResponse } from '@flash-sale/shared-types';
+import { PrismaService } from './prisma/prisma.service';
 
 @Injectable()
 export class AppService {
-  getHello(): HelloResponse {
-    return { message: 'Hello World!' };
+  constructor(private readonly prisma: PrismaService) {}
+
+  async getRootStatus(): Promise<RootDbStatusResponse> {
+    try {
+      const userCount = await this.prisma.db.user.count();
+      return { connected: true, userCount };
+    } catch {
+      return {
+        connected: false,
+        userCount: 0,
+        error: 'Database unavailable',
+      };
+    }
   }
 }

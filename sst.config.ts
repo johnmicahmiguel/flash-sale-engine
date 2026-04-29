@@ -20,6 +20,8 @@ export default $config({
     const vpc = new sst.aws.Vpc('Vpc');
     const cluster = new sst.aws.Cluster('Cluster', { vpc });
 
+    const mongoDbUri = new sst.Secret('MongoDbUri');
+
     const api = new sst.aws.Service('Api', {
       cluster,
       cpu: '0.25 vCPU',
@@ -33,6 +35,7 @@ export default $config({
         NODE_ENV: 'production',
         PORT: '3000',
         CORS_ORIGINS: `https://${webDomain}`,
+        MONGODB_URI: mongoDbUri.value,
       },
       loadBalancer: {
         domain: {

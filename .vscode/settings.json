@@ -1,0 +1,6 @@
+{
+  // Prisma ORM 7+ uses different schema rules (e.g. no datasource `url` in schema.prisma).
+  // This repo stays on Prisma 6 for MongoDB until v7 supports it; the editor extension
+  // otherwise lints the schema as v7 and shows false errors — pin the LSP to match the project.
+  "prisma.pinToPrisma6": true
+}

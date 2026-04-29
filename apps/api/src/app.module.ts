@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthController } from './health.controller';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { HealthController } from './health.controller';
         join(__dirname, '..', '.env'),
       ],
     }),
+    PrismaModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

@@ -11,5 +11,6 @@ dist
 coverage
 **/coverage
 *.log
+apps/api/scripts/
 .sst
 docs
