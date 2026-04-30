@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -12,6 +13,13 @@ async function bootstrap() {
     .filter(Boolean);
 
   app.enableCors({ origin: corsOrigins });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   const rawPort = config.get<string>('PORT');
   const parsed = rawPort ? Number.parseInt(rawPort, 10) : 3000;

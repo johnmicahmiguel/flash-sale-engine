@@ -8,6 +8,7 @@
     "lint": "turbo lint",
     "test": "turbo test",
     "typecheck": "turbo typecheck",
+    "stress:sale": "pnpm --filter @flash-sale/api stress:sale",
     "sst:dev": "sst dev",
     "sst:deploy": "sst deploy --stage=production",
     "sst:remove": "sst remove --stage=production"

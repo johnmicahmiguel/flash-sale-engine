@@ -1,6 +1,14 @@
 import type {
   HealthResponse,
+  PurchaseRequest,
+  PurchaseResult,
+  ResetSaleRequest,
+  ResetSaleResponse,
   RootDbStatusResponse,
+  SaleStatusResponse,
+  SecuredItemCheckResponse,
+  SimulationLabVerifyRequest,
+  SimulationLabVerifyResponse,
 } from "@flash-sale/shared-types";
 
 const API_URL =
@@ -15,15 +23,33 @@ export interface ApiResult<T> {
   data: T | null;
   error: string | null;
   endpoint: string;
-  method: "GET";
+  method: "GET" | "POST";
 }
 
 async function getJson<T>(path: string): Promise<ApiResult<T>> {
+  return requestJson<T>(path, { method: "GET" });
+}
+
+async function postJson<T>(
+  path: string,
+  body: unknown,
+): Promise<ApiResult<T>> {
+  return requestJson<T>(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+async function requestJson<T>(
+  path: string,
+  init: RequestInit & { method: "GET" | "POST" },
+): Promise<ApiResult<T>> {
   const endpoint = `${API_URL}${path}`;
   const start = performance.now();
 
   try {
-    const res = await fetch(endpoint, { method: "GET" });
+    const res = await fetch(endpoint, init);
     const latencyMs = Math.round(performance.now() - start);
     const text = await res.text();
 
@@ -44,7 +70,7 @@ async function getJson<T>(path: string): Promise<ApiResult<T>> {
       data,
       error: res.ok ? parseError : `${res.status} ${res.statusText}`.trim(),
       endpoint,
-      method: "GET",
+      method: init.method,
     };
   } catch (err) {
     const latencyMs = Math.round(performance.now() - start);
@@ -55,10 +81,24 @@ async function getJson<T>(path: string): Promise<ApiResult<T>> {
       data: null,
       error: err instanceof Error ? err.message : "Network error",
       endpoint,
-      method: "GET",
+      method: init.method,
     };
   }
 }
 
 export const fetchHello = () => getJson<RootDbStatusResponse>("/");
 export const fetchHealth = () => getJson<HealthResponse>("/health");
+export const fetchSaleStatus = () =>
+  getJson<SaleStatusResponse>("/sale/status");
+export const submitPurchase = (body: PurchaseRequest) =>
+  postJson<PurchaseResult>("/sale/purchase", body);
+export const checkSecuredItem = (body: PurchaseRequest) =>
+  getJson<SecuredItemCheckResponse>(
+    `/sale/secured?userId=${encodeURIComponent(body.userId)}`,
+  );
+export const resetSale = (body: ResetSaleRequest) =>
+  postJson<ResetSaleResponse>("/sale/reset", body);
+export const verifySimulationLabUnlock = (
+  body: SimulationLabVerifyRequest,
+) =>
+  postJson<SimulationLabVerifyResponse>("/sale/simulation-lab/verify", body);
