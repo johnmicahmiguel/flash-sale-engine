@@ -21,6 +21,7 @@ export default $config({
     const cluster = new sst.aws.Cluster('Cluster', { vpc });
 
     const mongoDbUri = new sst.Secret('MongoDbUri');
+    const simulationLabSecret = new sst.Secret('SimulationLabSecret');
 
     const api = new sst.aws.Service('Api', {
       cluster,
@@ -36,6 +37,7 @@ export default $config({
         PORT: '3000',
         CORS_ORIGINS: `https://${webDomain}`,
         MONGODB_URI: mongoDbUri.value,
+        SIMULATION_LAB_SECRET: simulationLabSecret.value,
       },
       loadBalancer: {
         domain: {
