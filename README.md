@@ -223,13 +223,13 @@ Expected outcome for `STRESS_BUYERS=1000` and `STRESS_STOCK=100`:
 
 Redis handles the fast stock reservation path with an atomic Lua script. This avoids forcing every concurrent buyer through MongoDB for the stock decision.
 
-Tradeoff: if the API crashes after Redis reserves stock but before Mongo persists the purchase, that reservation can be stranded until reset. For a production system, I would add reservation TTLs plus reconciliation or an async finalizer. For this assessment, the simpler path keeps the implementation understandable while proving the concurrency rule.
+Tradeoff: if the API crashes after Redis reserves stock but before Mongo persists the purchase, that reservation can be stranded until reset. For a production system, I would add reservation TTLs plus reconciliation or an async finalizer. For this project, the simpler path keeps the implementation understandable while proving the concurrency rule.
 
 ### MongoDB for Durable Purchases
 
 MongoDB stores purchases and sale configuration. A unique compound index on `(saleId, userId)` enforces one item per user at the database level.
 
-MongoDB Atlas is a practical fit for this assessment because the free tier is enough for local/demo traffic, the SRV connection string is simple to share via environment variables, and reviewers do not need to run a separate MongoDB container just to exercise the app.
+MongoDB Atlas is a practical fit here because the free tier is enough for local/demo traffic, the SRV connection string is simple to share via environment variables, and anyone cloning the repo does not need to run a separate MongoDB container just to exercise the app.
 
 ### Mongo Fallback
 
@@ -303,7 +303,7 @@ The API is packaged as a stateless container service behind a load balancer. Tha
 
 Redis is the one intentional gap in the SST deployment. Local review uses Redis to demonstrate the full high-concurrency path, while the AWS stack focuses on the deployable web/API infrastructure: hosted static frontend, containerized API, load balancer, custom domains, health checks, secrets, and CI/CD. In a production hardening pass, the optional Redis node in the diagram would become ElastiCache or another managed Redis service wired into the API environment.
 
-The current SST config keeps `scaling: { min: 1, max: 1 }` for cost and predictability in this assessment deployment. Scaling API containers improves throughput, but it does not replace the concurrency controls: shared Redis/Mongo constraints still enforce stock and one-item-per-user correctness across all instances.
+The current SST config keeps `scaling: { min: 1, max: 1 }` for cost and predictability in the deployed stack. Scaling API containers improves throughput, but it does not replace the concurrency controls: shared Redis/Mongo constraints still enforce stock and one-item-per-user correctness across all instances.
 
 Commands are present if you want to inspect the IaC flow:
 
